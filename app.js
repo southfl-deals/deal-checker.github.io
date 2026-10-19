@@ -452,7 +452,7 @@ function card(p,extraTag){
 function filtered(){
   const q=$("#q").value.trim().toLowerCase(), c=$("#fCounty").value, ch=$("#fChannel").value, t=$("#fTier").value, s=$("#fStatus").value, past=$("#fPast").checked, sort=$("#fSort").value;
   const rows=props.filter(p=>(!newOnly||(()=>{const s=sinceVisit(p);return s.added||s.changed||s.gone})())&&(newOnly||past||isUpcoming(p))&&(!c||p.county===c)&&(!ch||p.channel===ch)&&(t?tierOf(p)===t:tierOf(p)!=="SET ASIDE")&&(!s||(p.status||"Watching")===s)
-    &&(!q||[p.addr,p.city,p.case,p.plaintiff,p.owner,p.type,p.zoning,p.pid].join(" ").toLowerCase().includes(q)));
+    &&(!q||(h=>q.replace(/[^a-z0-9#\- ]/g," ").split(/\s+/).filter(Boolean).every(w=>h.includes(w)))([p.addr,p.city,p.case,p.plaintiff,p.owner,p.type,p.zoning,p.pid].join(" ").toLowerCase().replace(/[^a-z0-9#\- ]/g," "))));
   const K=new Map(rows.map(p=>[p._id,calc(p)])); const sc=id=>{const k=K.get(id);return k.ai?k.score:k.pre};
   const by={date:(a,b)=>dkey(a.date).localeCompare(dkey(b.date))||String(a.addr).localeCompare(String(b.addr)),
     score:(a,b)=>sc(b._id)-sc(a._id), tier:(a,b)=>TIERS.findIndex(x=>x[0]===tierOf(a))-TIERS.findIndex(x=>x[0]===tierOf(b))||dkey(a.date).localeCompare(dkey(b.date)), disc:(a,b)=>(K.get(b._id).discPct??-9)-(K.get(a._id).discPct??-9),
